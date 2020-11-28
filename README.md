@@ -1,7 +1,5 @@
 # videochat-sad
 
-Aquesta és una demo d'una aplicació de videoconferència feta amb REACT.
-
 # Passos
 
 Primer creem el repositori en el qual treballarem.
