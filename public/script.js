@@ -9,6 +9,8 @@ const myVideo = document.createElement('video')
 
 myVideo.muted = true //això ens muteja al nostre propi microfon per no causar problemes
 
+const peers = {}
+
 navigator.mediaDevices.getUserMedia({
     video: true,
     audio: true
@@ -28,6 +30,10 @@ navigator.mediaDevices.getUserMedia({
     })
 })
 
+socket.on('user-disconnected', userId => {
+    if (peers[userId]) peers[userId].close()
+})
+
 myPeer.on('open', id => {
     socket.emit('join-room', ROOM_ID, id)
 })
@@ -36,11 +42,13 @@ function connectToNewUser(userId, stream) {
     const call = myPeer.call(userId, stream)
     const video = document.createElement('video')
     call.on('stream', userVideoStream => {
-        addVideoStream(userVideoStream)  //afegeix el video dels altres usuaris a la nostre pàgina
+        addVideoStream(video, userVideoStream)  //afegeix el video dels altres usuaris a la nostre pàgina
     })
     call.on('close', () => {
         video.remove() //eliminem els videos dels altres users quan se'n van de la trucada
     })
+
+    peers[userId] = call
 }
 
 

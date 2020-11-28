@@ -20,7 +20,11 @@ app.get('/:room', (req, res) => {
 io.on('connection', socket => {
     socket.on('join-room', (roomId, userId) => {
         socket.join(roomId)
-        socket.to(roomId).broadcast.emit('user-connected', userId)
+        socket.to(roomId).broadcast.emit('user-connected', userId) //envia el userId a tots els altres users de la room
+
+        socket.on('disconnect', () => { //elimina el video dels usuaris que es desconnecten
+            socket.to(roomId).broadcast.emit('user-disconnected', userId)
+        })
     })
 })
 
